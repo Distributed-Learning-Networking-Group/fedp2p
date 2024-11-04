@@ -1,0 +1,96 @@
+syntax = "proto3";
+
+package broadcast;
+
+import "google/protobuf/timestamp.proto";
+
+service BroadcastService {
+  rpc Communicate(stream ClientMessage) returns (stream ServerMessage) {}
+}
+
+message ClientMessage {
+  oneof payload {
+    ClientLogin client_login = 1;
+    ModelAggregate model_aggregate = 2;
+    SelectionMessage selection_message = 3;
+    SimulationMessage simulation_message = 4;
+  }
+}
+
+message ClientLogin {
+  int32 rank = 1;
+  google.protobuf.Timestamp timestamp = 2;
+}
+
+message ModelAggregate {
+  bytes state_dict = 1;
+  google.protobuf.Timestamp timestamp = 2;
+  int32 rank = 3;
+  int32 dataset_length = 4;
+  int32 round_number = 5;
+}
+
+message SelectionMessage {
+  bytes data = 1;
+  google.protobuf.Timestamp timestamp = 2;
+}
+
+message SimulationMessage {
+  bytes data = 1;
+  int32 rank = 2;
+  int32 client_id = 3;
+}
+
+message ServerMessage {
+  oneof payload {
+    ConfigDistribute config_distribute = 1;
+    ClientProfileDistribute client_profile_distribute = 2;
+    ClientRankDistribute client_rank_distribute = 3;
+    TorrentDistribute torrent_distribute = 4;
+    ModelDistribute model_distribute = 5;
+    SimulationMessage simulation_message = 6;
+    RoundTerminate round_terminate = 7;
+    TrainingTerminate training_terminate = 8;
+  }
+}
+
+message ConfigDistribute {
+  bytes config = 1;
+  google.protobuf.Timestamp timestamp = 2;
+}
+
+message ClientProfileDistribute {
+  bytes client_profiles = 1;
+  google.protobuf.Timestamp timestamp = 2;
+}
+
+message ClientRankDistribute {
+  repeated int32 simulated_ranks = 1;
+  int32 round_number = 2;
+}
+
+message TorrentDistribute {
+  bytes torrent = 1;
+  google.protobuf.Timestamp timestamp = 2;
+  int32 round_number = 3;
+}
+
+message ModelDistribute {
+  bytes state_dict = 1;
+  google.protobuf.Timestamp timestamp = 2; // Protobuf 的 Timestamp 类型标准定义就是为表示一个独立于时区的时间点而设计的，基于 UTC
+  int32 round_number = 3;
+  repeated int32 simulated_ranks = 4;
+}
+
+message RoundTerminate {
+  int32 round_number = 1;
+  google.protobuf.Timestamp timestamp = 2;
+}
+
+message TrainingTerminate {
+  google.protobuf.Timestamp timestamp = 1;
+}
+
+
+
+// python -m grpc_tools.protoc -I. --python_out=. --grpc_python_out=. grpc.proto
