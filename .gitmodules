@@ -1,0 +1,3 @@
+[submodule "bt_ps/p2p_server"]
+	path = bt_ps/p2p_server
+	url = git@github.com:whr819987540/p2p-server.git
