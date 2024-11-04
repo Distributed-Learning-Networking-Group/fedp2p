@@ -1,0 +1,15 @@
+{
+    "runtimes": {
+        "nvidia": {
+            "args": [],
+            "path": "nvidia-container-runtime"
+        }
+    },
+    "insecure-registries": [
+        "192.168.124.102:5000"
+    ],
+    "default-runtime": "nvidia",
+    "node-generic-resources": [
+        "NVIDIA-GPU=GPU-86fd6f16-1e00-7413-a8ea-ea5a70147096"
+    ]
+}
